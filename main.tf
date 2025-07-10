@@ -34,9 +34,10 @@ variable "instruqt_user_id" {
 }
 
 resource "akeyless_auth_method_universal_identity" "learner_uid" {
-  name    = format("/instruqt-users-uid/%s/uid-%s", var.instruqt_user_id, var.instruqt_user_id)
-  jwt_ttl = 500
-  ttl     = 500
+  name        = format("/instruqt-users-uid/%s/uid-%s", var.instruqt_user_id, var.instruqt_user_id)
+  jwt_ttl     = 500
+  ttl         = 500
+  deny_rotate = true
 }
 
 resource "akeyless_role" "role" {
