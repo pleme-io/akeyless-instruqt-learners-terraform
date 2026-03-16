@@ -10,25 +10,14 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, substrate, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs { inherit system; };
-      mkTerraformModuleCheck = (import "${substrate}/lib/terraform-module.nix").mkTerraformModuleCheck;
-    in {
-      checks.default = mkTerraformModuleCheck pkgs {
-        pname = "akeyless-instruqt-learners-terraform";
-        version = "0.0.0-dev";
-        src = self;
-        description = "Akeyless Instruqt learner provisioning — creates per-participant Universal Identity auth methods, scoped roles, and access bindings for training";
-        homepage = "https://github.com/pleme-io/akeyless-instruqt-learners-terraform";
-      };
-
-      devShells.default = pkgs.mkShellNoCC {
-        packages = with pkgs; [
-          opentofu
-          tflint
-          terraform-docs
-        ];
-      };
-    });
+  outputs = inputs:
+    (import "${inputs.substrate}/lib/repo-flake.nix" {
+      inherit (inputs) nixpkgs flake-utils;
+    }) {
+      self = inputs.self;
+      language = "terraform";
+      builder = "check";
+      pname = "akeyless-instruqt-learners-terraform";
+      description = "Akeyless Instruqt learner provisioning — creates per-participant Universal Identity auth methods, scoped roles, and access bindings for training";
+    };
 }
